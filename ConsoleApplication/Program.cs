@@ -37,6 +37,8 @@ namespace ConsoleApplication
                 //We are supposed to set token before fetching data. 
                 //Token is like key to access to function
                 var response = await apiHttpClient.GetStringAsync(requestUri: "https://localhost:5003/api/CrudOperation/GetCustomerModel?Id=2");
+
+                Console.WriteLine(response);
             }
 
             Console.ReadLine();

@@ -42,6 +42,18 @@ namespace IdentityServer
                 .AddInMemoryApiScopes(new List<ApiScope>
                 {
                     new ApiScope(name:"api") // We are specifing api
+                })
+                .AddInMemoryApiResources(new List<ApiResource>
+                {
+                    //Here We can specify api resources and change the name
+                    //Definetelly it should be matches with audience name in Api
+
+                    new ApiResource(name:"api"){
+                        Scopes=new List<string>
+                        {
+                            "api"
+                        }
+                    }
                 });
         }
 

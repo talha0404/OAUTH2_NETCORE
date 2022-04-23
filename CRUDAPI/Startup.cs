@@ -7,7 +7,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
 namespace CRUDAPI
@@ -35,15 +34,19 @@ namespace CRUDAPI
             });
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                    .AddJwtBearer(options =>
-                    {
-                        options.Authority = Configuration["Authentication:Authority"];
-                        options.TokenValidationParameters = new TokenValidationParameters
-                        {
-                            ValidateAudience = false  // We need to write it to take data from api
-                        };
-                    }
-                );
+                   .AddJwtBearer(options =>
+                   {
+                       options.Authority = Configuration["Authentication:Authority"];
+                       options.Audience = "api";
+                       //it should be match in IdentityServer AddInMemoryApiResources when add IdentityServer. We are registering api to IdentityServer
+
+
+                       //options.TokenValidationParameters = new TokenValidationParameters
+                       //{
+                       //    ValidateAudience = false  // without registering api to access data
+                       //};
+                   }
+             );
 
             //it is supposed to match with IdentityServer startup
             //we are configuring Clients in IdentityServer and build start before starting Api to access Api functions 
