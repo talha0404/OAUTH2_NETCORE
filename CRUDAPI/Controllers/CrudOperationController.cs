@@ -1,6 +1,7 @@
 ﻿using CRUDAPI.DOMAIN;
 using CRUDAPI.EFCORE;
 using CRUDAPI.Services.Services.CustomerServices;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -11,8 +12,10 @@ using System.Threading.Tasks;
 
 namespace CRUDAPI.Controllers
 {
-    [Route("api/[controller]")]
+
     [ApiController]
+    [Authorize(policy: "ApiScope")]
+    [Route("api/[controller]")]
     public class CrudOperationController : ControllerBase
     {
         private readonly CrudApiDbContext _dbContext;
