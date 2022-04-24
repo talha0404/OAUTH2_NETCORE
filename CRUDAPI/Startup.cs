@@ -1,4 +1,5 @@
 using CRUDAPI.EFCORE;
+using CRUDAPI.OperationFilters;
 using CRUDAPI.Services.Services.CustomerServices;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -8,6 +9,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using System;
+using System.Collections.Generic;
 
 namespace CRUDAPI
 {
@@ -23,7 +26,6 @@ namespace CRUDAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
             services.AddControllers();
 
             services.AddDbContext<CrudApiDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("ConnectionStrings")));
@@ -31,6 +33,26 @@ namespace CRUDAPI
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "CRUDAPI", Version = "v1" });
+
+                // We add OAuth to screen to enter ClientId and Token
+                c.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
+                {
+                    Type = SecuritySchemeType.OAuth2,
+                    Flows = new OpenApiOAuthFlows
+                    {
+                        ClientCredentials = new OpenApiOAuthFlow
+                        {
+                            TokenUrl = new Uri($"{Configuration["Authentication:Authority"]}/connect/token"),
+                            Scopes = new Dictionary<string, string>
+                            {
+                                {"api", "API"}
+                            }
+                        }
+                    }
+                });
+
+                c.OperationFilter<AuthorizeOperationFilter>(); // Class we created
+
             });
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
